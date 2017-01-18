@@ -15,7 +15,6 @@ class MysqliDriver
     protected $database = '';
     protected $charset = 'utf8';
     protected $addslashes = true;
-
     public $affectedRows = 0;
 
     public function __construct($config = array())
