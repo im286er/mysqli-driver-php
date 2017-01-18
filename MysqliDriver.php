@@ -1,5 +1,7 @@
 <?php
 
+namespace Library;
+
 /**
  * mysqli驱动器
  * @author 刘健 <59208859@qq.com>
@@ -44,11 +46,11 @@ class MysqliDriver
         $this->mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, 2); // 设置超时时间
         $connect = @$this->mysqli->real_connect($this->host, $this->username, $this->password, $this->database, $this->port);
         if (!$connect) {
-            throw new Exception(sprintf('Connect Error: [%s] %s', $this->mysqli->connect_errno, $this->mysqli->connect_error));
+            throw new \Exception(sprintf('Connect Error: [%s] %s', $this->mysqli->connect_errno, $this->mysqli->connect_error));
         }
         // 设置编码
         if (!$this->mysqli->set_charset($this->charset)) {
-            throw new Exception(sprintf("Error loading character set utf8: [%s] %s", $this->mysqli->errno, $this->mysqli->error));
+            throw new \Exception(sprintf("Error loading character set utf8: [%s] %s", $this->mysqli->errno, $this->mysqli->error));
         }
     }
 
@@ -65,7 +67,7 @@ class MysqliDriver
         // 处理字符串参数
         unset($argv[0]);
         foreach ($argv as $key => $value) {
-            if (!is_numeric($value)) {
+            if (is_string($value)) {
                 // 转义
                 if ($this->addslashes) {
                     $argv[$key] = addslashes($argv[$key]);
@@ -87,7 +89,7 @@ class MysqliDriver
         // 返回数据
         if (is_bool($resource)) {
             if (!$resource) {
-                throw new Exception(sprintf("Error SQL: [%s] %s", $this->mysqli->errno, $this->mysqli->error));
+                throw new \Exception(sprintf("Error SQL: [%s] %s", $this->mysqli->errno, $this->mysqli->error));
             }
             return $resource;
         } else {
