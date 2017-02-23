@@ -156,7 +156,6 @@ class MysqliDriver
         $this->mysqli->commit();
         $this->mysqli->autocommit(true); // 重新开启自动提交
         $this->transStartStatus = false;
-        $this->transQueryStatus = false;
     }
 
     /**
@@ -167,7 +166,6 @@ class MysqliDriver
         $this->mysqli->rollback();
         $this->mysqli->autocommit(true); // 重新开启自动提交
         $this->transStartStatus = false;
-        $this->transQueryStatus = false;
     }
 
 }
