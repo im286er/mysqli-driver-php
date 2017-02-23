@@ -3,6 +3,7 @@
 include 'autoload.php';
 
 use Library\MysqliDriver;
+use Library\MysqliResult;
 
 // 初始化
 $mysqli = new MysqliDriver();
@@ -12,6 +13,7 @@ $mysqli->connect($conf);
 // 查询
 $query = $mysqli->query('select * from `money`');
 print_r($query->result());
+print_r($query->row());
 
 // 事务
 $mysqli->transStart();

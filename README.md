@@ -47,7 +47,29 @@ if($status){
 }
 ```
 
-#### 2. 事务
+#### 3. 结果集
+
+返回全部记录，对象
+
+```php
+$query = $mysqli->query('select * from `money`');
+print_r($query->result());
+```
+
+返回全部记录，数组
+
+```php
+$query = $mysqli->query('select * from `money`');
+print_r($query->result(Library\MysqliResult::MYSQLI_ARRAY));
+```
+
+返回单独一行结果。如果你的查询不止一行结果，它只返回第一行
+```php
+$query = $mysqli->query('select * from `money`');
+print_r($query->row());
+```
+
+#### 4. 事务
 
 事物中的sql执行失败，会自动回滚
 
