@@ -22,7 +22,7 @@ class MysqliDriver
     protected $password = '';
     protected $database = '';
     protected $charset = 'utf8';
-    protected $addslashes = true;
+    protected $escapeString = true;
 
     /* 公共参数 */
     public $affectedRows = 0;
@@ -77,8 +77,8 @@ class MysqliDriver
         foreach ($argv as $key => $value) {
             if (!is_numeric($value)) {
                 // 转义
-                if ($this->addslashes) {
-                    $argv[$key] = addslashes($argv[$key]);
+                if ($this->escapeString) {
+                    $argv[$key] = $this->mysqli->real_escape_string($argv[$key]);
                 }
                 // 加单引号
                 $argv[$key] = "'{$argv[$key]}'";
