@@ -16,5 +16,6 @@ print_r($query->result());
 // 事务
 $mysqli->transStart();
 $mysqli->query('update `money` set number = number - ? where uid = ?', 10, 100);
-$mysqli->query('insert `history`(uid, number) values(?, ?)', 100, 10);
+$mysqli->query('insert `history`(uid, number) values(?, ?)', 100, -10);
 $mysqli->transComplete();
+echo 'Transaction execution status: ' . ($mysqli->transStatus() ? 'true' : 'false');
