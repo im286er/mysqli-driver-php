@@ -19,8 +19,8 @@ class MysqliDriver
     protected $host = 'localhost';
     protected $port = 3306;
     protected $username = 'root';
-    protected $password = '123456';
-    protected $database = 'test';
+    protected $password = '';
+    protected $database = '';
     protected $charset = 'utf8';
     protected $addslashes = true;
 
@@ -30,7 +30,7 @@ class MysqliDriver
     public function __construct($config = array())
     {
         $this->mysqli = mysqli_init();
-        $this->connect($config);
+        empty($config) or $this->connect($config);
     }
 
     public function __destruct()
@@ -73,7 +73,7 @@ class MysqliDriver
         // 取出sql
         $sql = $argv[0];
         unset($argv[0]);
-        // 处理字符串参数        
+        // 处理字符串参数
         foreach ($argv as $key => $value) {
             if (!is_numeric($value)) {
                 // 转义
@@ -115,8 +115,7 @@ class MysqliDriver
      */
     public function transStart()
     {
-        $this->transStartStatus = true;
-        $this->transQueryStatus = true;
+        $this->transBegin();
     }
 
     /**
@@ -129,8 +128,6 @@ class MysqliDriver
         } else {
             $this->transRollback();
         }
-        $this->transStartStatus = false;
-        $this->transQueryStatus = false;
     }
 
     /**
@@ -146,6 +143,8 @@ class MysqliDriver
      */
     public function transBegin()
     {
+        $this->transStartStatus = true;
+        $this->transQueryStatus = true;
         $this->mysqli->autocommit(false); // 关闭自动提交
     }
 
@@ -156,6 +155,8 @@ class MysqliDriver
     {
         $this->mysqli->commit();
         $this->mysqli->autocommit(true); // 重新开启自动提交
+        $this->transStartStatus = false;
+        $this->transQueryStatus = false;
     }
 
     /**
@@ -165,6 +166,8 @@ class MysqliDriver
     {
         $this->mysqli->rollback();
         $this->mysqli->autocommit(true); // 重新开启自动提交
+        $this->transStartStatus = false;
+        $this->transQueryStatus = false;
     }
 
 }

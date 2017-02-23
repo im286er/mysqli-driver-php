@@ -32,7 +32,7 @@ class MysqliResult
     /**
      * 返回全部查询结果，无数据返回**空数组**
      */
-    public function result($resultType = MYSQLI_OBJECT)
+    public function result($resultType = self::MYSQLI_OBJECT)
     {
         $tmp = array();
         while ($row = $this->nextRow($resultType)) {
@@ -44,7 +44,7 @@ class MysqliResult
     /**
      * 这个方法返回单独一行结果。如果你的查询不止一行结果，它只返回第一行
      */
-    public function row($resultType = MYSQLI_OBJECT)
+    public function row($resultType = self::MYSQLI_OBJECT)
     {
         $this->mysqli_result->data_seek(0);
         return $this->nextRow($resultType);
@@ -53,9 +53,9 @@ class MysqliResult
     /**
      * 返回下一行
      */
-    public function nextRow($resultType = MYSQLI_OBJECT)
+    public function nextRow($resultType = self::MYSQLI_OBJECT)
     {
-        return $resultType == MYSQLI_OBJECT ? $this->mysqli_result->fetch_object() : $this->mysqli_result->fetch_assoc();
+        return $resultType == self::MYSQLI_OBJECT ? $this->mysqli_result->fetch_object() : $this->mysqli_result->fetch_assoc();
     }
 
 }
