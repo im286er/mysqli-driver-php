@@ -15,9 +15,11 @@ $query = $mysqli->query('select * from `money`');
 print_r($query->result());
 print_r($query->row());
 
+$uid = 101;
+$number = -10;
 // 事务
 $mysqli->transStart();
-$mysqli->query('update `money` set number = number - ? where uid = ?', 10, 100);
-$mysqli->query('insert `history`(uid, number) values(?, ?)', 100, -10);
+$mysqli->query('update `money` set number = number - ? where uid = ?', abs($number), $uid);
+$mysqli->query('insert `history`(uid, number) values(?, ?)', $uid, $number);
 $mysqli->transComplete();
 echo 'Transaction execution status: ' . ($mysqli->transStatus() ? 'true' : 'false');

@@ -12,8 +12,8 @@ class MysqliDriver
     /* 内部参数 */
     protected $mysqli = '';
     protected $connectTimeout = 2;
-    protected $transStartStatus = false;
-    protected $transQueryStatus = false;
+    protected $transOpen = false;
+    protected $allQuerySucc = false;
 
     /* 用户配置参数 */
     protected $host = 'localhost';
@@ -22,7 +22,8 @@ class MysqliDriver
     protected $password = '';
     protected $database = '';
     protected $charset = 'utf8';
-    protected $escapeString = true;
+    protected $escapeString = true; // 转义字符串
+    protected $backZeroAffect = true; // 事务内的sql影响数量为0，则rollback该事务
 
     /* 公共参数 */
     public $affectedRows = 0;
@@ -96,13 +97,12 @@ class MysqliDriver
         $this->affectedRows = $this->mysqli->affected_rows;
         // 返回数据
         if (is_bool($resource)) {
-            if (!$resource) {
+            if ($resource === false) {
                 // sql执行失败
-                if ($this->transStartStatus) {
-                    $this->transQueryStatus = false;
-                } else {
-                    throw new \Exception(sprintf("Error SQL: [%s] %s", $this->mysqli->errno, $this->mysqli->error));
-                }
+                throw new \Exception(sprintf("Error SQL: [%s] %s", $this->mysqli->errno, $this->mysqli->error));
+            }
+            if ($this->backZeroAffect && $this->transOpen && $this->affectedRows <= 0) {
+                $this->allQuerySucc = false;
             }
             return $resource;
         } else {
@@ -123,7 +123,7 @@ class MysqliDriver
      */
     public function transComplete()
     {
-        if ($this->transQueryStatus) {
+        if ($this->transStatus()) {
             $this->transCommit();
         } else {
             $this->transRollback();
@@ -135,7 +135,7 @@ class MysqliDriver
      */
     public function transStatus()
     {
-        return $this->transQueryStatus;
+        return $this->allQuerySucc;
     }
 
     /**
@@ -143,8 +143,8 @@ class MysqliDriver
      */
     public function transBegin()
     {
-        $this->transStartStatus = true;
-        $this->transQueryStatus = true;
+        $this->transOpen = true;
+        $this->allQuerySucc = true;
         $this->mysqli->autocommit(false); // 关闭自动提交
     }
 
@@ -155,7 +155,7 @@ class MysqliDriver
     {
         $this->mysqli->commit();
         $this->mysqli->autocommit(true); // 重新开启自动提交
-        $this->transStartStatus = false;
+        $this->transOpen = false;
     }
 
     /**
@@ -165,7 +165,7 @@ class MysqliDriver
     {
         $this->mysqli->rollback();
         $this->mysqli->autocommit(true); // 重新开启自动提交
-        $this->transStartStatus = false;
+        $this->transOpen = false;
     }
 
 }
