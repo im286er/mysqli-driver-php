@@ -73,6 +73,8 @@ print_r($query->row());
 
 事物中的sql执行失败，会自动回滚
 
+    注意: 默认update/insert/delete的affected_rows为0时事物也会自动回滚，如果你不想这样，请配置MysqliDriver::backZeroAffect = false;
+
 ```php
 $mysqli->transStart();
 $mysqli->query('update `money` set number = number - ? where uid = ?', 10, 100);
